@@ -1,0 +1,6 @@
+*.pt
+*.wav
+*.spk
+vosk-model-ru-0.10/
+imperialwoolsilero-model-v3-ru/
+answers/
