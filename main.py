@@ -37,9 +37,10 @@ def callback(indata, frames, time, status):
 rec = vosk.KaldiRecognizer(model, samplerate)
 
 thanks = ["urwelcome", "urwelcome2", "urwelcome3"]
+done = ['done1', 'done2', 'done3']
 hello = ['привет', 'приветствую', 'здарова','здаров','даров','прив','здравствуй','здравствуйте']
 request_count = 0
-
+flag_browser = False
 with sd.RawInputStream(samplerate=samplerate, blocksize=8000, device=device, dtype='int16',
                        channels=channels, callback=callback):
     print("Начинаю распознавание. Говорите...\n")
@@ -55,7 +56,14 @@ with sd.RawInputStream(samplerate=samplerate, blocksize=8000, device=device, dty
             if "благодарю" in text or "спасибо" in text.lower():
                 voice_fast_callback(random.choice(thanks), chunk)   
                 
-            if 'кен' in text:
+            if flag_browser:
+                if text.strip() == "":
+                    continue
+                search_web(text)
+                flag_browser = False    
+                voice_fast_callback(random.choice(done), chunk)
+                
+            if 'кен' in text and not flag_browser:
               text = text.replace('кен', '')
               ans = query_classify(text)
               
@@ -64,7 +72,25 @@ with sd.RawInputStream(samplerate=samplerate, blocksize=8000, device=device, dty
                   voice_fast_callback('hello-night', chunk)
               
               if ans == 'command':
-                pass
+                # pass
+                ai_sort = final_query_handler(text)
+                
+                if ai_sort == 'браузер':
+                  voice_fast_callback('browser-run', chunk)
+                  voice_fast_callback('browser-url', chunk)
+                  flag_browser = True
+                  
+                  continue
+                elif ai_sort == 'погода':
+                  weather = get_weather('Южно-Сахалинск')
+                  tts.text2speech(weather)
+                elif ai_sort == 'время':
+                  tts.text2speech(f'{get_time()}, сэр')
+                elif ai_sort == 'стим':
+                  pass
+                elif ai_sort == 'музыка':
+                  pass
+                  
               elif ans == 'dialog':
                 tts.text2speech(generate_answer(text))
               else:

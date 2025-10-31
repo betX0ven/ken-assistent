@@ -146,24 +146,6 @@ def test_classifier(classifier):
         intent, confidence = classifier.predict(phrase)
         status = "✅" if confidence > 0.7 else "⚠️"
 
-# def interactive_mode(classifier):
-#     print("\n🤖 РЕЖИМ ДИАЛОГА (для выхода введи 'exit')")
-#     print("-" * 40)
-    
-#     while True:
-#         user_input = input("Ты: ").strip()
-        
-#         if user_input.lower() in ['exit', 'выход']:
-#             break
-        
-#         intent, confidence = classifier.predict(user_input)
-        
-#         if intent == "unclear":
-#             print("Джарвис: Не совсем понял. Это команда к действию или просто размышление?")
-#         elif intent == "command":
-#             print(f"Джарвис: Выполняю команду (уверенность: {confidence:.2f})")
-#         else:  # dialog
-#             print(f"Джарвис: Обдумываю твой вопрос (уверенность: {confidence:.2f})")
 
 def query_classify(query):
     classifier = create_and_train_classifier()

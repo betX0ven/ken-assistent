@@ -21,4 +21,4 @@ def text_to_speech(text):
                                 speaker=speaker,
                                 sample_rate=sample_rate)
 
-text_to_speech('')
+text_to_speech('выполнил, сэр')

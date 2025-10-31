@@ -4,12 +4,12 @@ import webbrowser
 from translate import Translator
 
 def get_weather(city):
-    api_key = '9c5258c859de394817b5b82cd64a0455' # получите ключ API на сайте OpenWeatherMap
+    api_key = '9c5258c859de394817b5b82cd64a0455'
     url = 'https://api.openweathermap.org/data/2.5/weather?q='+city+'&units=metric&lang=ru&appid=79d1ca96933b0328e1c7e3e7a26cb347'
     
     try:
         response = requests.get(url)
-        response.raise_for_status() # сгенерирует исключение для кода отличного от 200
+        response.raise_for_status() 
         
         data = response.json()
         weather_description = data['weather'][0]['description']
