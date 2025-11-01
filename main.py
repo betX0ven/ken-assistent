@@ -6,6 +6,7 @@ import sys
 import json
 import random
 import torch
+from art import tprint
 
 from tts import *
 from functions import *
@@ -29,6 +30,11 @@ model = vosk.Model(model_path)
 
 q = queue.Queue()
 
+netschool_login = os.getenv("NETSCHOOL_LOGIN")
+netschool_password = os.getenv("NETSCHOOL_PASSWORD")
+
+
+
 def callback(indata, frames, time, status):
     if status:
         print(status, file=sys.stderr)
@@ -38,12 +44,13 @@ rec = vosk.KaldiRecognizer(model, samplerate)
 
 thanks = ["urwelcome", "urwelcome2", "urwelcome3"]
 done = ['done1', 'done2', 'done3']
+callbacks = ['callback1', 'callback2', 'callback3']
 hello = ['привет', 'приветствую', 'здарова','здаров','даров','прив','здравствуй','здравствуйте']
 request_count = 0
 flag_browser = False
 with sd.RawInputStream(samplerate=samplerate, blocksize=8000, device=device, dtype='int16',
                        channels=channels, callback=callback):
-    print("Начинаю распознавание. Говорите...\n")
+    tprint("WELCOME VITALY\n")
     voice_fast_callback('ready', chunk)
     while True:
         data = q.get()
@@ -62,7 +69,8 @@ with sd.RawInputStream(samplerate=samplerate, blocksize=8000, device=device, dty
                 search_web(text)
                 flag_browser = False    
                 voice_fast_callback(random.choice(done), chunk)
-                
+            if text == 'кен' or text == 'кенн' or text == 'кеннеди':
+              voice_fast_callback(random.choice(callbacks), chunk)
             if 'кен' in text and not flag_browser:
               text = text.replace('кен', '')
               ans = query_classify(text)
@@ -85,11 +93,24 @@ with sd.RawInputStream(samplerate=samplerate, blocksize=8000, device=device, dty
                   weather = get_weather('Южно-Сахалинск')
                   tts.text2speech(weather)
                 elif ai_sort == 'время':
-                  tts.text2speech(f'{get_time()}, сэр')
+                  tts.text2speech(f'сейчас {get_time()}, сэр')
                 elif ai_sort == 'стим':
                   pass
                 elif ai_sort == 'музыка':
                   pass
+                elif ai_sort == 'расписание':
+                  get_schedule_file()
+                  directory = 'schedules'
+                  filename = None
+
+                  for file in os.listdir(directory):
+                      if file.startswith("!!Расписание"):
+                          filename = file
+                          break
+                  if filename:
+                    tts.text2speech("Файл расписания найден. вы хотите открыть его?")
+                  else:
+                    tts.text2speech("Файл расписания не найден. Возможно его ещё не сделали")
                   
               elif ans == 'dialog':
                 tts.text2speech(generate_answer(text))
